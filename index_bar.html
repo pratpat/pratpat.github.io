@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<head>
+    <meta charset="UTF-8">
+    <title>D3 Maps</title>
+	<title>Bootstrap Example</title>
+   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.2.2/d3.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" type="text/css"
+          href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+
+.rectangle {
+	fill: steelblue;
+}
+
+.dot {
+  stroke: #000;
+}
+.circle {
+	fill: steelblue;
+}
+.rectangle:hover {
+	fill: green;
+}
+.axis {
+    font: 10px sans-serif;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+ .tooltip {
+            position: absolute;
+            font-size: 12px;
+            width:  auto;
+            height: auto;
+            pointer-events: none;
+            background-color: white;
+</style>
+</head>
+<body>
+<div class = "row">
+<center><h2> Pat's superstore sales revenue</h2></center>
+ </div>
+   <div class="container">
+	<nav class="navbar navbar-default">
+	  <div class="container-fluid"> 
+  
+		<ul class="nav navbar-nav">
+		  <li><a href="Home.html">Story</a></li>
+		  <li ><a href="index_map.html">Sales by State</a></li>
+		  </ul>
+			  </div>
+	</nav>
+	<div class = "row">
+			<div class="col-sm-9">
+		<div id="fig"></div>
+		
+		</div>
+
+	</div>
+	
+	
+</div>
+	<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="http://d3js.org/d3.v2.js"></script>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="https://unpkg.com/topojson@3"></script>
+</div>
+<script>
+
+var queryString = decodeURIComponent(window.location.search);
+queryString = queryString.substring(7);
+
+var bar_func = function(){
+var count = 0;
+padding = -100;
+
+var	margin = {top: 30, right: 40, bottom: 60, left: 80},
+	width = 700 - margin.left - margin.right,
+	height = 480 - margin.top - margin.bottom;
+	
+
+// Adds the svg canvas
+	var	chart1 = d3.select("body")
+	.append("svg")
+	.attr("width", width + margin.left + margin.right)
+	.attr("height", height + margin.top + margin.bottom)
+	.append("g")
+	.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+		
+
+// add the tooltip area to the webpage
+var tooltip = d3.select("body").append("div")
+    .attr("class", "tooltip")
+    .style("opacity", 0);
+
+var load_data = function(queryString) {
+d3.csv("bar_data.csv", function(error, data){
+
+    var StatesMap = {};
+    data.forEach(function(d) {
+    var States = d.State;
+    StatesMap[States] = [];});
+	
+	// filter year
+	var data = data.filter(function(d){return d.State == queryString;});
+
+	// Get every column value
+	var elements = Object.keys(data[0])
+		.filter(function(d){
+		//return ((d != "State") && (d != "Product"));
+		return (d == "Sales");
+		});
+		  makeVis(data,StatesMap);
+	});
+};
+
+load_data(queryString);	
+
+var makeVis = function(data,StatesMap) {	
+ if (count >= 1) {count =0; exit();}				
+	var selection =  "Sales"; //elements[0];
+    //console.log(selection);
+	var y = d3.scale.linear()
+			.domain([0, d3.max(data, function(d){
+			    var format = d3.format("$,");
+				return +d[selection];
+			})])
+			.range([height, 0]);
+    
+	var x = d3.scale.ordinal()
+			.domain(data.map(function(d){ return d.Product;}))
+			.rangeBands([0, width]);
+
+	var xAxis = d3.svg.axis()
+		.scale(x)
+	    .orient("bottom")
+		;
+		
+	
+
+	var yAxis = d3.svg.axis()
+		.scale(y)
+	    .orient("left");
+
+	chart1.append("g")
+    	.attr("class", "x axis")
+    	.attr("transform", "translate(0," + height + ")")
+    	.call(xAxis)
+		.selectAll("text")
+    	.style("font-size", "12px")
+      	.style("text-anchor", "end")
+      	.attr("dx", "-.8em")
+      	.attr("dy", "-.55em")
+      	.attr("transform", "rotate(-90)" );
+		
+			 chart1.append("g")             
+      .attr("transform",
+            "translate(" + (width/2) + " ," + 
+                           (height ) + ")")
+      .style("text-anchor", "middle")
+      .text("Date");
+		
+	 	chart1.append("g")
+    	.attr("class", "y axis")
+    	.call(yAxis);
+		
+	chart1.selectAll("rectangle")
+		.data(data)
+		.enter()
+		.append("rect")
+		.attr("class","rectangle")
+		.attr("width", width/data.length)
+		.attr("height", function(d){
+			return height - y(+d[selection]);
+		})
+		.attr("x", function(d, i){
+			return (width / data.length) * i ;
+		})
+		.attr("y", function(d){
+			return y(+d[selection]);
+		})
+		.append("title")
+		.text(function(d){
+			return d.State + " : " + d[selection];
+		}) ;
+		
+		
+		   chart1.append("text")
+            .attr("text-anchor", "middle")  // this makes it easy to centre the text as the transform is applied to the anchor
+            .attr("transform", "translate("+ (padding/7) +","+(height/2)+")rotate(-90)")  // text is drawn off the screen top left, move down and out and rotate
+			.text("Sales in $");
+			
+			  chart1.append("text")
+            .attr("text-anchor", "middle")  // this makes it easy to centre the text as the transform is applied to the anchor
+            //.attr("transform", "translate("+ (width/3) +","+(height - (padding/0.25))+")")  // centre below axis
+			.attr("transform", "translate("+ (width/2) +","+(height + (1000/10))+")")
+            .text("Product");
+
+			chart1.append("text")
+            .attr("text-anchor", "middle")  // this makes it easy to centre the text as the transform is applied to the anchor
+            //.attr("transform", "translate("+ (width/3) +","+(height - (padding/0.25))+")")  // centre below axis
+			.attr("transform", "translate("+ (width/2) +","+(10/26)+")")
+            .text(queryString + " sales revenue by each product")
+			.style("font-size", "16px") 
+			.style("text-decoration", "underline") ;
+			
+
+			var States = Object.keys(StatesMap).sort();
+	var selector = d3.select("#drop")
+    	.append("select")
+    	.attr("id","dropdown")
+    	.on("change", function(d){
+        	y.domain([0, d3.max(data, function(d){
+				return +d["Sales"];})]);
+
+        	yAxis.scale(y);
+
+        	d3.selectAll(".rectangle")
+           		.transition()
+	            .attr("height", function(d){
+					return height - y(+d["Sales"]);
+				})
+				.attr("x", function(d, i){
+					return (width / data.length) * i ;
+				})
+				.attr("y", function(d){
+					return y(+d["Sales"]);
+				})
+           		.ease("linear")
+           		.select("title")
+           		.text(function(d){
+				    var format = d3.format("$,");	
+					//return d.Product + " : " + format(Math.round(d["Sales"]));
+					return d["Product"] + " : " + d["Sales"];
+           		});
+      
+           	d3.selectAll("g.y.axis")
+           		.transition()
+           		.call(yAxis);
+
+         });
+
+	
+};
+//chart 2
+padding = -300
+var	margin = {top: 30, right: 20, bottom: 100, left: 80},
+	width = 700 - margin.left - margin.right,
+	height = 480 - margin.top - margin.bottom;
+	var	chart2 = d3.select("body")
+	.append("svg")
+		.attr("width", width + margin.left + margin.right)
+		.attr("height", height + margin.top + margin.bottom)
+	.append("g")
+		.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+		var txt = "Profit and Sales of superstore by each customer for state: " + queryString ;
+//document.write(" <td width=100% align=center>")
+//document.write("<p align=\"top\">" + txt.bold() + "</p>" );
+
+var xValue = function(d) { return d.Sales;}, // data -> value
+    xScale = d3.scale.linear().range([0, width]), // value -> display
+    xMap = function(d) { return xScale(xValue(d));}, // data -> display
+    xAxis = d3.svg.axis().scale(xScale).orient("bottom");
+
+// setup y
+var yValue = function(d) { return d["Profit"];}, // data -> value
+    yScale = d3.scale.linear().range([height, 0]), // value -> display
+    yMap = function(d) { return yScale(yValue(d));}, // data -> display
+    yAxis = d3.svg.axis().scale(yScale).orient("left");
+
+// setup fill color
+var cValue = function(d) { return "colour";},
+    color = d3.scale.category10();
+
+// add the tooltip area to the webpage
+var tooltip = d3.select("body").append("div")
+    .attr("class", "tooltip")
+    .style("opacity", 2);
+
+// load data
+d3.csv("scatter_data.csv", function(error, data) {
+
+  // change string (from CSV) into number format
+  
+  var data = data.filter(function(d){return d.State == queryString;});
+  var elements = Object.keys(data[0])
+	.filter(function(d){
+		data.forEach(function(d) {
+			d.Sales = +d.Sales;
+			d["Profit"] = +d["Profit"];
+		});
+  });
+
+  // don't want dots overlapping axis, so add in buffer to data domain
+  xScale.domain([d3.min(data, xValue)-1, d3.max(data, xValue)+1]);
+  yScale.domain([d3.min(data, yValue)-1, d3.max(data, yValue)+1]);
+
+  // x-axis
+  chart2.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis)
+    .append("text")
+      .attr("class", "label")
+      .attr("x", width)
+      .attr("y", -6)
+      .style("text-anchor", "end")
+
+  // y-axis
+  chart2.append("g")
+      .attr("class", "y axis")
+      .call(yAxis)
+    .append("text")
+      .attr("class", "label")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 6)
+      .attr("dy", ".71em")
+      .style("text-anchor", "end")
+
+  // draw dots
+  chart2.selectAll(".dot")
+      .data(data)
+    .enter().append("circle")
+      .attr("class", "dot")
+      .attr("r", 3.5)
+      .attr("cx", xMap)
+      .attr("cy", yMap)
+      .style("fill", function(d) { return color(cValue(d));}) 
+      .on("mouseover", function(d) {
+          tooltip.transition()
+               .duration(200)
+               .style("opacity", .9);
+			    var format = d3.format("$,");
+          tooltip.html(d["Cust Name"] + "<br/> (" + format(Math.round(xValue(d))) + ", " + format(Math.round(yValue(d))) + ")")
+               .style("left", (d3.event.pageX + 5) + "px")
+               .style("top", (d3.event.pageY - 28) + "px");
+      })
+      .on("mouseout", function(d) {
+          tooltip.transition()
+               .duration(500)
+               .style("opacity", 0);
+      });
+
+	  
+	     chart2.append("text")
+            .attr("text-anchor", "middle")  // this makes it easy to centre the text as the transform is applied to the anchor
+            .attr("transform", "translate("+ (padding/7) +","+(height/2)+")rotate(-90)")  // text is drawn off the screen top left, move down and out and rotate
+            .text("Profit");
+			
+			  chart2.append("text")
+            .attr("text-anchor", "middle")  // this makes it easy to centre the text as the transform is applied to the anchor
+            .attr("transform", "translate("+ (width/2) +","+(height + (1000/20))+")")  // centre below axis
+            .text("Sales");
+			
+			chart2.append("text")
+            .attr("text-anchor", "middle")  // this makes it easy to centre the text as the transform is applied to the anchor
+            //.attr("transform", "translate("+ (width/3) +","+(height - (padding/0.25))+")")  // centre below axis
+			.attr("transform", "translate("+ (width/2) +","+(300/24)+")")
+            .text(queryString + " cusotmer sales and profit")
+			.style("font-size", "16px") 
+			.style("text-decoration", "underline") ;
+});
+};
+
+bar_func();
+
+</script>
+</body>
