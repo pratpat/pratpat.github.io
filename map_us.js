@@ -70,13 +70,12 @@ d3.csv("sample.csv", function(data) {
 		         json.features[j].properties.value = parseFloat(dataValue);
 				//console.log(dataValue) ;
 	 		}
-         // break;
+ 
         
       }
     }
 
-	
-    // Bind the data to the SVG and create one path per GeoJSON feature
+
     svg.selectAll("path")
       .data(json.features)
       .enter()
@@ -97,11 +96,8 @@ d3.csv("sample.csv", function(data) {
            .style("opacity", 1);   
 	       d3.select(this)
           .transition(t)
-          //.style("fill", "red");	
            var format = d3.format("$,");		  
-         // div.text(d.properties.name)
 		  div.text(d.properties.name + " : " + format(Math.round(d.properties.value)))
-		  //div.text(parseFloat(d.properties.value))
            .style("left", (d3.event.pageX) + "px")     
            .style("top", (d3.event.pageY)  + "px");    
     })   
@@ -122,17 +118,11 @@ d3.csv("sample.csv", function(data) {
     ;
     
           //add a legend
-		  
-		  
-  
-  //
-        var w = 140, h = 300;
+
+		  var w = 140, h = 300;
 
         var key = d3.select("#map")
             .append("svg")
-            //.attr("viewBox", "0 0 1800 1300")
-            // .attr("preserveAspectRatio", "xMinYMin meet")
-            // .attr("viewBox", "0 0 1800 1300")
             .attr("width", w)
             .attr("height", h)
             .attr("class", "legend")
@@ -161,8 +151,6 @@ d3.csv("sample.csv", function(data) {
             .attr("width", w - 100)
             .attr("height", h)
             .style("fill", "url(#gradient)")
-			//.attr('x', 1000 + 10)
-			//.attr('y', legendRectSize - legendSpacing)
             .attr("transform", "translate(0,10)");
 
         var y = d3.scaleLinear()
