@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Bootstrap Example</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <style>
+.counties {
+  fill: none;
+}
+
+.states {
+  fill: none;
+  stroke: #fff;
+  stroke-linejoin: round;
+}
+.navbar {
+    background-color: #F8F8F8;
+    color: #E7E7E7;
+}
+
+
+/* Title */
+.navbar-default .navbar-brand {
+    color: #777;
+}
+
+.rectangle {
+	fill: steelblue;
+}
+.rectangle:hover {
+	fill: orange;
+}
+.axis {
+  font: 10px sans-serif;
+}
+
+div.tooltip {   
+  position: absolute;           
+  text-align: center;           
+  width: 150px;                  
+  height: 5;                 
+  padding: px;             
+  font-size: 14px;     
+  background: #FFFFE0;
+  border: 1px;      
+  border-radius: 8px;           
+  pointer-events: none;         
+}     
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+  
+}
+.color-me{
+    color:blue;
+}
+  </style>
+  
+</head>
+<body>
+<div class = "row">
+<center><h2> Pat's superstore sales revenue</h2></center>
+ </div>
+   <div class="container">
+	<nav class="navbar navbar-default">
+	  <div class="container-fluid"> 
+  
+		<ul class="nav navbar-nav">
+		  <li class="active"><a href="index_home.html" class="color-me">Story</a></li>
+		  <li><a href="index.html">Sales by State</a></li>
+		 
+		</ul>
+	  </div>
+	</nav>
+ 	<div class = "row">
+	</div>
+	<br/>
+	<div class ="rows">
+		<div class = "col-sm-6">
+This website presents a story on Pat's Superstore sales by each product and customer details for each US states. US states chart with colors gives the details on Sales revenue in USD for a given US state. There are 3 pages and 3 charts in this data visulization, below are the details of each page:<br>
+
+<b>Sales by State:</b> This is the first driver page which show sales revenue in USD for each state in USD. By clicking on any state it will take you to next page<br>
+<b>Superstore sales revenue:</b> This page contains 2 drill down charts which gives details of each product sales revenue for a given state and details on sales profit ratio for the customers who purchased given product in a state. To select different state user needs to go back to sales by state page using navigation bar<br>
+<b>story:</b> This gives the story of the visulization<br><br>
+Navigation bar has been added to go to story page or main sales by states page. <br>
+Data for home values was taken public data on github awesome public dataset: <a href="https://github.com/awesomedata/awesome-public-datasets/">https://github.com/awesomedata/awesome-public-datasets/</a> 
+</div>
+	<div class = "col-sm-6">
+	<center><u><b> Rubric Criteria </b></u></center><br>
+	<b>Narrative structure</b> – This interactive visualization uses a drill down story. User can click on the state to drill down into sales by each product and sales/profit details for each customer. US map with colors gives overall picture of Sales revenue per state, tooltip is added to give details of total sales per state <br>
+	<b>Parameters</b> - State name is the parameter passed to each scene. The parameter is passed between the pages using query string <br>
+    <b>Triggers</b> – There are four triggers used in this visualization – First one mouse click event on state which takes user to the next page to generate drill down information on products and sale/profit. Antoher is a tooltip giving details of state and total Sales in USD on mouse over. Third is change in the bar color on mouse over and fourth is showing customer name and sales/profit in the scatter plot<br>
+    <b>Scenes</b> – Each US state has a corresponding scene in the form of coordinated charts – bar chart which gives sales by each product for a given state and a scatter plot which shows sales/profit for all the customer for a state.  <br>
+    <b>Annotations</b> – Story page gives complete story of the website. Each drilldown chart has a state name heading annotation which gives state information to the user to see data in context. Also axis information and detailed for each page has been given in this page<br><br><br>
+
+		</div>
+	</div>
+	<div class = "row">
+	    
+		<b>Conclusion</b> With this data visulation and story telling we can find out which products sales is higher for a given US state for Pat's superstore. It also gives information on the customer with Sales and profit information. This way superstore can prepare for products inventory for each state based of the sales revenue and generate the list of Gold customer based on the sales data for given state.
+	
+</div>
+
+</body>
+</html>
